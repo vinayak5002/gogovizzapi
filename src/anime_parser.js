@@ -525,6 +525,34 @@ export const scrapeThread = async ({ episodeId, page = 0 }) => {
  }
 };
 
+export const scrapeEpisodes = async ( { title } ) => {
+      console.log("In scrapeEpisodes");
+      try {
+            const soup = await axios.get('https://ww1.9anime2.com/watch/'+title);
+            console.log(`Fetched page`);
+            const $ = cheerio.load(soup.data, { xmlMode: true });
+
+
+            const status = $('div.col1').find('div').eq(2).text().split(' ')[1];
+            const eps = $('ul.episodes').find('li');
+            const epCount = eps.length
+
+
+            console.log(`eps: ${epCount}`);
+
+            return {
+                  status: status,
+                  epCount: epCount
+            };
+
+      } catch (err) {
+            if (err.response.status === 400) {
+                  return { error: 'Invalid page. Try again.' };
+            }
+            return { error: err };
+      }
+}
+
 // export const scrapeDownloadLinks = async({ episodeId }) => {
 //     if (!episodeId) {
 //         return { error: 'No episode id provided' };

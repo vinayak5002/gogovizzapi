@@ -16,6 +16,7 @@ import {
     scrapeStreamSB,
     scrapeFembed,
     scrapeThread,
+    scrapeEpisodes,
     DownloadReferer,
 } from './anime_parser.js';
 
@@ -47,6 +48,22 @@ app.get('/search', async(req, res) => {
         res.status(200).json(data);
     } catch (err) {
         res.status(500).json({
+            status: 500,
+            error: 'Internal Error',
+            message: err,
+        });
+    }
+});
+
+app.get('/liveEpCount/:title', async(req, res) => {
+    try {
+        const title = req.params.title;
+        console.log(`Calling scrapeEpisodes with ${title}`);
+        const data = await scrapeEpisodes({ title: title });
+
+        res.status(200).json(data);
+    } catch (err) {
+        res.status(500).send({
             status: 500,
             error: 'Internal Error',
             message: err,
